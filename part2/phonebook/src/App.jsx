@@ -1,31 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // 1. Добавили useEffect
+import axios from "axios";                   // 2. Импортировали axios
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "34-345-345-33" },
-  ]);
+  const [persons, setPersons] = useState([]); 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, []);
+
   const addPersons = (e) => {
     e.preventDefault();
+    
     if (persons.find((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook!`);
       return;
     }
+    
     if (newName === "" || newNumber === "") {
       alert(newName === "" ? "Enter name..." : "Phone number cannot be empty");
       return;
     }
-    const newPerson = { name: newName, number: newNumber };
-    setPersons([...persons, newPerson]);
-    setNewName("");
-    setNewNumber("");
+
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    }
+
+    axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      });
   };
+
   const handleNameChange = (e) => setNewName(e.target.value);
   const handleNumberChange = (e) => setNewNumber(e.target.value);
   const handleSearchChange = (e) => setSearch(e.target.value);
