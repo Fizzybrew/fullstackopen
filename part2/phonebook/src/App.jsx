@@ -1,31 +1,29 @@
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import personService from './services/persons';
+import personService from "./services/persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([]); 
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    personService
-      .getAll()
-      .then(response => {
-        setPersons(response.data)
-      })
+    personService.getAll().then((response) => {
+      setPersons(response.data);
+    });
   }, []);
 
   const addPersons = (e) => {
     e.preventDefault();
-    
+
     if (persons.find((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook!`);
       return;
     }
-    
+
     if (newName === "" || newNumber === "") {
       alert(newName === "" ? "Enter name..." : "Phone number cannot be empty");
       return;
@@ -34,15 +32,13 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-    }
+    };
 
-    personService
-      .create(personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
-      });
+    personService.create(personObject).then((response) => {
+      setPersons(persons.concat(response.data));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const handleNameChange = (e) => setNewName(e.target.value);
@@ -52,6 +48,14 @@ const App = () => {
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const handleDeletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.del(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
 
   return (
     <div>
@@ -66,7 +70,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons
+        filteredPersons={filteredPersons}
+        onDelete={handleDeletePerson}
+      />
     </div>
   );
 };
