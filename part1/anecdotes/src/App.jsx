@@ -13,15 +13,33 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState({
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+  });
 
   const handleClick = () => {
     const randomIndex = Math.floor(Math.random() * anecdotes.length);
     setSelected(randomIndex);
   };
 
+  const handleClickVotes = () => {
+    const copy = { ...votes };
+    copy[selected] += 1;
+    setVotes(copy);
+  };
+
   return (
     <div>
       <p>{anecdotes[selected]}</p>
+      <p>Has {votes[selected]} votes</p>
+      <button onClick={handleClickVotes}>Vote</button>
       <button onClick={handleClick}>Next random anecdotes</button>
     </div>
   );
