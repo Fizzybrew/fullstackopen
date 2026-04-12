@@ -35,12 +35,24 @@ const App = () => {
     setVotes(copy);
   };
 
+  const winnerIndex = Object.keys(votes).reduce((a, b) =>
+    votes[a] >= votes[b] ? a : b,
+  );
+  const winner =
+    anecdotes[
+      Object.keys(votes).reduce((a, b) => (votes[a] >= votes[b] ? a : b))
+    ];
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>Has {votes[selected]} votes</p>
       <button onClick={handleClickVotes}>Vote</button>
       <button onClick={handleClick}>Next random anecdotes</button>
+      <h2>Anecdote with most votes</h2>
+      <p>{winner}</p>
+      <p>has {votes[winnerIndex]} votes</p>
     </div>
   );
 };
