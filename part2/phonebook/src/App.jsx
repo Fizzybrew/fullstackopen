@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react"; // 1. Добавили useEffect
-import axios from "axios";                   // 2. Импортировали axios
+import { useState, useEffect } from "react"; 
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import personService from './services/persons';
 
 const App = () => {
   const [persons, setPersons] = useState([]); 
@@ -11,8 +11,8 @@ const App = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         setPersons(response.data)
       })
@@ -36,8 +36,8 @@ const App = () => {
       number: newNumber,
     }
 
-    axios
-      .post('http://localhost:3001/persons', personObject)
+    personService
+      .create(personObject)
       .then(response => {
         setPersons(persons.concat(response.data))
         setNewName('')

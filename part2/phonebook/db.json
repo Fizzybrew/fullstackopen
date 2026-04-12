@@ -24,6 +24,11 @@
       "name": "Bob Taylor",
       "number": "666",
       "id": "lWCYWX6BVk0"
+    },
+    {
+      "name": "фыва",
+      "number": "фыва",
+      "id": "-WQ8Hb7140s"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
