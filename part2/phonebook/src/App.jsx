@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ModalWindow from "./components/ModalWindow";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -27,22 +29,20 @@ const App = () => {
           `${newName} is already in phonebook, replace the old number with a new one?`,
         )
       ) {
-        personService.update(existingPerson.id, {...existingPerson, number: newNumber})
+        personService
+          .update(existingPerson.id, { ...existingPerson, number: newNumber })
           .then(() => {
-            // Правильное обновление состояния
-            setPersons(prevPersons =>
-              prevPersons.map(person =>
-                person.id === existingPerson.id 
-                  ? { ...person, number: newNumber }
-                  : person
-              )
-            );
+            personService.getAll();
             setNewName("");
             setNewNumber("");
+            setIsModalOpen(true);
+            setTimeout(() => {
+              setIsModalOpen(false);
+            }, 3000);
           })
-          .catch(error => {
-            console.error('Error updating:', error);
-            alert('Failed to update');
+          .catch((error) => {
+            console.error("Error updating:", error);
+            alert("Failed to update");
           });
       }
       return;
@@ -62,13 +62,17 @@ const App = () => {
       .create(personObject)
       .then((response) => {
         // Правильное добавление нового контакта
-        setPersons(prevPersons => [...prevPersons, response.data]);
+        setPersons((prevPersons) => [...prevPersons, response.data]);
         setNewName("");
         setNewNumber("");
+        setIsModalOpen(true);
+            setTimeout(() => {
+              setIsModalOpen(false);
+            }, 3000);
       })
-      .catch(error => {
-        console.error('Error creating:', error);
-        alert('Failed to add person');
+      .catch((error) => {
+        console.error("Error creating:", error);
+        alert("Failed to add person");
       });
   };
 
@@ -82,14 +86,16 @@ const App = () => {
 
   const handleDeletePerson = (id, name) => {
     if (window.confirm(`Delete ${name}?`)) {
-      personService.del(id)
+      personService
+        .del(id)
         .then(() => {
-          // Правильное удаление
-          setPersons(prevPersons => prevPersons.filter((person) => person.id !== id));
+          setPersons((prevPersons) =>
+            prevPersons.filter((person) => person.id !== id),
+          );
         })
-        .catch(error => {
-          console.error('Error deleting:', error);
-          alert('Failed to delete person');
+        .catch((error) => {
+          console.error("Error deleting:", error);
+          alert("Failed to delete person");
         });
     }
   };
@@ -97,6 +103,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      {isModalOpen && <ModalWindow />}
       <Filter search={search} handleSearchChange={handleSearchChange} />
       <h2>Add a new</h2>
       <PersonForm
