@@ -19,36 +19,6 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
-    },
-    {
-      "name": "aswd",
-      "number": "asd",
-      "id": "lJTe2mbppu8"
-    },
-    {
-      "name": "4",
-      "number": "4",
-      "id": "JGqeadWgJN0"
-    },
-    {
-      "name": "d",
-      "number": "d",
-      "id": "XEAVUxKpjek"
-    },
-    {
-      "name": "s",
-      "number": "s",
-      "id": "_I5mwcip-24"
-    },
-    {
-      "name": "dd",
-      "number": "dd",
-      "id": "WMGhJyYNMIQ"
-    },
-    {
-      "name": "2",
-      "number": "2",
-      "id": "Ah3Etdt2XHQ"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
