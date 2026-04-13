@@ -19,8 +19,32 @@ const App = () => {
   const addPersons = (e) => {
     e.preventDefault();
 
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook!`);
+    const existingPerson = persons.find((person) => person.name === newName);
+
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${newName} is already in phonebook, replace the old number with a new one?`,
+        )
+      ) {
+        personService.update(existingPerson.id, {...existingPerson, number: newNumber})
+          .then(() => {
+            // Правильное обновление состояния
+            setPersons(prevPersons =>
+              prevPersons.map(person =>
+                person.id === existingPerson.id 
+                  ? { ...person, number: newNumber }
+                  : person
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch(error => {
+            console.error('Error updating:', error);
+            alert('Failed to update');
+          });
+      }
       return;
     }
 
@@ -34,11 +58,18 @@ const App = () => {
       number: newNumber,
     };
 
-    personService.create(personObject).then((response) => {
-      setPersons(persons.concat(response.data));
-      setNewName("");
-      setNewNumber("");
-    });
+    personService
+      .create(personObject)
+      .then((response) => {
+        // Правильное добавление нового контакта
+        setPersons(prevPersons => [...prevPersons, response.data]);
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch(error => {
+        console.error('Error creating:', error);
+        alert('Failed to add person');
+      });
   };
 
   const handleNameChange = (e) => setNewName(e.target.value);
@@ -51,9 +82,15 @@ const App = () => {
 
   const handleDeletePerson = (id, name) => {
     if (window.confirm(`Delete ${name}?`)) {
-      personService.del(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+      personService.del(id)
+        .then(() => {
+          // Правильное удаление
+          setPersons(prevPersons => prevPersons.filter((person) => person.id !== id));
+        })
+        .catch(error => {
+          console.error('Error deleting:', error);
+          alert('Failed to delete person');
+        });
     }
   };
 
