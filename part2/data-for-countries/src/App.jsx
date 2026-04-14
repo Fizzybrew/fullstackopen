@@ -4,9 +4,10 @@ import SearchResults from "./components/SearchResults";
 import countryService from "./services/country";
 
 function App() {
-  const [countries, setCountries] = useState([]); // Список всех стран с сервера
-  const [filter, setFilter] = useState(""); // Строка поиска
+  const [countries, setCountries] = useState([]);
+  const [filter, setFilter] = useState("");
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     countryService
@@ -41,8 +42,14 @@ function App() {
       <CountrySearch
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
+        onShowCountry={(country) => setSelectedCountry(country)}
       />
-      <SearchResults countries={filteredCountries} filter={filter} />
+      <SearchResults
+        countries={filteredCountries}
+        filter={filter}
+        selectedCountry={selectedCountry}
+        handleShowCountry={(c) => setSelectedCountry(c)}
+      />
     </>
   );
 }
